@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class NaiveBayesClassifier implements MlModel{
+public class NaiveBayesClassifier{
 
     private Map<Integer, Double> classProbs;//class probabilities
     private Map<Integer, Map<Integer, Map<Integer,Double>> > featureProbs;
