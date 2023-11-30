@@ -5,13 +5,13 @@ import java.util.*;
 
 public class CSVtoArrayList {
 
-    public static List<List<String>> readCSV(String filePath) {
-        List<List<String>> records = new ArrayList<>();
+    public static List<List<Object>> readCSV(String filePath) {
+        List<List<Object>> records = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                List<String> record = new ArrayList<>();
+                List<Object> record = new ArrayList<>();
                 String[] values = line.split(",");
                 
                 for (String value : values) {
@@ -30,10 +30,10 @@ public class CSVtoArrayList {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
         String filePath = System.getProperty("user.dir")+"/src/main/java/com/example/CWC2023.csv";
-        List<List<String>> csvData = readCSV(filePath);
+        List<List<Object>> csvData = readCSV(filePath);
 
         // Printing the content of the ArrayList of ArrayLists
-        for (List<String> record : csvData) {
+        for (List<Object> record : csvData) {
             System.out.println(record);
         }
     }

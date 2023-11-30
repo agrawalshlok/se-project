@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class knnClassifier implements MlModel{
 
-    private List<List<Integer>> trainingData; // Change the type of trainingData to List<List<Double>>
-    private List<Integer> labels;
+    private List<List<Double>> trainingData; // Change the type of trainingData to List<List<Double>>
+    private List<Double> labels;
     private int k;
 
     public knnClassifier(int k) {
@@ -19,18 +19,18 @@ public class knnClassifier implements MlModel{
         this.labels = new ArrayList<>();
     }
 
-    public void fit(List<List<Integer>> X_train, List<Integer> y_train) {
+    public void fit(List<List<Double>> X_train, List<Double> y_train) {
         this.trainingData = X_train;
         this.labels = y_train;
     }
 
-    private Integer _predict(List<Integer> instance) {
+    private Double _predict(List<Double> instance) {
         List<Neighbor> neighbors = new ArrayList<>();
 
         // Calculate distances and store in neighbors list
         for (int i = 0; i < trainingData.size(); i++) {
-            List<Integer> dataPoint = trainingData.get(i);
-            int label = labels.get(i);
+            List<Double> dataPoint = trainingData.get(i);
+            double label = labels.get(i);
             double distance = euclideanDistance(instance, dataPoint);
             neighbors.add(new Neighbor(distance, label));
         }
@@ -39,29 +39,29 @@ public class knnClassifier implements MlModel{
         Collections.sort(neighbors, Comparator.comparingDouble(Neighbor::getDistance));
 
         // Count occurrences of each label in the k nearest neighbors
-        Map<Integer, Integer> labelCount = new HashMap<>();
+        Map<Double, Integer> labelCount = new HashMap<>();
         for (int i = 0; i < k; i++) {
-            int neighborLabel = neighbors.get(i).getLabel();
+            double neighborLabel = neighbors.get(i).getLabel();
             labelCount.put(neighborLabel, labelCount.getOrDefault(neighborLabel, 0) + 1);
         }
 
         // Find the label with the highest count
-        int predictedLabel = Collections.max(labelCount.entrySet(), Map.Entry.comparingByValue()).getKey();
+        double predictedLabel = Collections.max(labelCount.entrySet(), Map.Entry.comparingByValue()).getKey();
 
         return predictedLabel;
     }
 
-    public List<Integer> predict(List<List<Integer>> X_test) {
-        List<Integer> y_pred = new ArrayList<>();
+    public List<Double> predict(List<List<Double>> X_test) {
+        List<Double> y_pred = new ArrayList<>();
         for (int i = 0; i < X_test.size(); i++) {
-            int predictedLabel = _predict(X_test.get(i));
+            double predictedLabel = _predict(X_test.get(i));
             y_pred.add(predictedLabel);
         }
 
         return y_pred;
     }
 
-    private double euclideanDistance(List<Integer> instance1, List<Integer> instance2) {
+    private double euclideanDistance(List<Double> instance1, List<Double> instance2) {
         double sum = 0.0;
         for (int i = 0; i < instance1.size(); i++) {
             sum += Math.pow(instance1.get(i) - instance2.get(i), 2);
@@ -69,7 +69,7 @@ public class knnClassifier implements MlModel{
         return Math.sqrt(sum);
     }
 
-    public double calculateAccuracy(List<Integer> yTrue, List<Integer> yPred) {
+    public double calculateAccuracy(List<Double> yTrue, List<Double> yPred) {
         int correct = 0;
         for (int i = 0; i < yTrue.size(); i++) {
             if (yTrue.get(i).equals(yPred.get(i))) {
@@ -81,9 +81,9 @@ public class knnClassifier implements MlModel{
 
     private static class Neighbor {
         private double distance;
-        private int label;
+        private double label;
 
-        public Neighbor(double distance, int label) {
+        public Neighbor(double distance, double label) {
             this.distance = distance;
             this.label = label;
         }
@@ -92,7 +92,7 @@ public class knnClassifier implements MlModel{
             return distance;
         }
 
-        public int getLabel() {
+        public double getLabel() {
             return label;
         }
     }
@@ -102,25 +102,25 @@ public class knnClassifier implements MlModel{
         knnClassifier knn = new knnClassifier(3);
 
         // Sample training data
-        List<List<Integer>> trainingData = new ArrayList<>();
-        trainingData.add(List.of(1, 2));
-        trainingData.add(List.of(2, 3));
-        trainingData.add(List.of(3, 4));
+        List<List<Double>> trainingData = new ArrayList<>();
+        trainingData.add(List.of(1.0, 2.0));
+        trainingData.add(List.of(2.0, 3.0));
+        trainingData.add(List.of(3.0, 4.0));
 
         // Corresponding labels
-        List<Integer> labels = new ArrayList<>();
-        labels.add(1);
-        labels.add(2);
-        labels.add(1);
+        List<Double> labels = new ArrayList<>();
+        labels.add(1.0);
+        labels.add(2.0);
+        labels.add(1.0);
 
         // Train the model
         knn.fit(trainingData, labels);
 
         // Make predictions
-        List<Integer> testInstance = List.of(2, 3);
-        List<List<Integer>> y_test = new ArrayList<>();
+        List<Double> testInstance = List.of(2.0, 3.0);
+        List<List<Double>> y_test = new ArrayList<>();
         y_test.add(testInstance);
-        List<Integer> y_pred = knn.predict(y_test);
+        List<Double> y_pred = knn.predict(y_test);
 
         System.out.println("Predicted label: " + y_pred.get(0));
     }
