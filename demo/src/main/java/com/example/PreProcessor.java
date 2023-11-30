@@ -8,28 +8,45 @@ import java.util.Map;
 import java.util.Random;
 
 public class PreProcessor {
-    public void replaceNullWithMean(List<List<Object>> data, int columnIndex) {
-        // Calculate the mean for the specified column
-        double sum = 0;
-        int count = 0;
+    // Function to replace null values with the mode for a specific column and convert doubles to integers
+    public void replaceNullWithMode(List<List<Object>> data, int columnIndex) {
+        // Calculate the mode for the specified column
+        Object mode = calculateMode(data, columnIndex);
+
+        // Replace null values with the mode and convert doubles to integers
+        for (List<Object> row : data) {
+            Object value = row.get(columnIndex);
+            if (value == null) {
+                row.set(columnIndex, mode);
+            } else if (value instanceof Double) {
+                row.set(columnIndex, ((Double) value).intValue());
+            }
+        }
+    }
+
+    // Function to calculate the mode for a specific column
+    private Object calculateMode(List<List<Object>> data, int columnIndex) {
+        Map<Object, Integer> valueCount = new HashMap<>();
 
         for (List<Object> row : data) {
             Object value = row.get(columnIndex);
             if (value != null) {
-                sum += Double.parseDouble(value.toString());
-                count++;
+                valueCount.put(value, valueCount.getOrDefault(value, 0) + 1);
             }
         }
 
-        double mean = sum / count;
+        // Find the mode
+        Object mode = null;
+        int maxCount = 0;
 
-        // Replace null values with the mean
-        for (List<Object> row : data) {
-            Object value = row.get(columnIndex);
-            if (value == null) {
-                row.set(columnIndex, mean);
+        for (Map.Entry<Object, Integer> entry : valueCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mode = entry.getKey();
             }
         }
+
+        return mode;
     }
 
     // Function to normalize a specific column
@@ -171,7 +188,7 @@ public class PreProcessor {
 
         int columnIndexToProcess = 0;
 
-        obj.replaceNullWithMean(data, columnIndexToProcess);
+        obj.replaceNullWithMode(data, columnIndexToProcess);
         obj.normalizeColumn(data, columnIndexToProcess);
         obj.labelEncodeColumn(data,1);
 
