@@ -29,7 +29,7 @@ public class CSVtoArrayList {
     public static void main(String[] args) {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
-        String filePath = System.getProperty("user.dir")+"/src/main/java/com/example/CWC2023.csv";
+        String filePath = System.getProperty("user.dir")+"/src/main/java/com/example/dataset.csv";
         List<List<Object>> csvData = readCSV(filePath);
 
         // Printing the content of the ArrayList of ArrayLists
