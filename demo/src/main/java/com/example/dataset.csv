@@ -1,6 +1,6 @@
 Day,Temperature (Celsius),Humidity (%),Wind Speed (km/h),Weather Condition
 Monday,15,65,10,Clear
-Tuesday,,70,15,Partly Cloudy
+Tuesday,18,70,15,Partly Cloudy
 Wednesday,12,60,12,Rainy
 Thursday,20,75,18,Clear
 Friday,22,68,14,Partly Cloudy

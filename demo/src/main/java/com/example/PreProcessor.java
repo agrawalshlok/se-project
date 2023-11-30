@@ -12,11 +12,10 @@ public class PreProcessor {
     public void replaceNullWithMode(List<List<Object>> data, int columnIndex) {
         // Calculate the mode for the specified column
         Object mode = calculateMode(data, columnIndex);
-
         // Replace null values with the mode and convert doubles to integers
         for (List<Object> row : data) {
             Object value = row.get(columnIndex);
-            if (value == null) {
+            if (value == null || value=="") {
                 row.set(columnIndex, mode);
             } else if (value instanceof Double) {
                 row.set(columnIndex, ((Double) value).intValue());
