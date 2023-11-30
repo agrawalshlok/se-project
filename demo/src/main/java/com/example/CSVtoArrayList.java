@@ -27,7 +27,9 @@ public class CSVtoArrayList {
     }
 
     public static void main(String[] args) {
-        String filePath = "CWC2023.csv+";
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+        String filePath = System.getProperty("user.dir")+"/src/main/java/com/example/CWC2023.csv";
         List<List<String>> csvData = readCSV(filePath);
 
         // Printing the content of the ArrayList of ArrayLists
