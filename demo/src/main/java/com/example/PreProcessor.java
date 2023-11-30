@@ -1,4 +1,5 @@
 package com.example;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Random;
 public class PreProcessor {
 
     // Function to replace null values with the mean for a specific column
-    public static void replaceNullWithMean(List<List<Object>> data, int columnIndex) {
+    public void replaceNullWithMean(List<List<Object>> data, int columnIndex) {
         // Calculate the mean for the specified column
         double sum = 0;
         int count = 0;
@@ -34,7 +35,7 @@ public class PreProcessor {
     }
 
     // Function to normalize a specific column
-    public static void normalizeColumn(List<List<Object>> data, int columnIndex) {
+    public void normalizeColumn(List<List<Object>> data, int columnIndex) {
         // Find the min and max values for the specified column
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
@@ -54,7 +55,7 @@ public class PreProcessor {
     }
 
     // Function to label encode a specific column
-    public static void labelEncodeColumn(List<List<Object>> data, int columnIndex) {
+    public void labelEncodeColumn(List<List<Object>> data, int columnIndex) {
         // Create a mapping of unique values to their corresponding labels
         Map<Object, Integer> valueToLabel = new HashMap<>();
         int labelCounter = 0;
@@ -75,7 +76,48 @@ public class PreProcessor {
         }
     }
 
-    public static Map<String, List<List<Object>>> splitData(List<List<Object>> data, double splitRatio) {
+    private SplittedData xysplit (List<List<Object>> trainingData, List<List<Object>> testingData, int y_col) {
+        int i = 0;
+        List<List<Integer>> x_train = new ArrayList<>();
+        List<List<Integer>> x_test = new ArrayList<>();
+        List<Integer> y_train = new ArrayList<>();
+        List<Integer> y_test = new ArrayList<>();
+
+        for (List<Object> row: trainingData) {
+            List<Integer> temp = new ArrayList<>();
+            for (i = 0; i < row.size(); i++) {
+                if (i != y_col) {
+                    int value = Integer.parseInt(row.get(i).toString());
+                    temp.add(value);
+                } else {
+                    int value = Integer.parseInt(row.get(i).toString());
+                    y_train.add(value);
+                }
+            }
+
+            x_train.add(temp);
+        }
+
+        for (List<Object> row: testingData) {
+            List<Integer> temp = new ArrayList<>();
+            for (i = 0; i < row.size(); i++) {
+                if (i != y_col) {
+                    int value = Integer.parseInt(row.get(i).toString());
+                    temp.add(value);
+                } else {
+                    int value = Integer.parseInt(row.get(i).toString());
+                    y_test.add(value);
+                }
+            }
+
+            x_test.add(temp);
+        }
+
+        SplittedData ret = new SplittedData(x_train, x_test, y_train, y_test);
+        return ret;
+    }
+
+    public SplittedData splitData(List<List<Object>> data, double splitRatio, int y_col) {
         if (splitRatio < 0 || splitRatio > 1) {
             throw new IllegalArgumentException("Invalid split ratio. It must be between 0 and 1.");
         }
@@ -111,16 +153,13 @@ public class PreProcessor {
             i++;
         }
 
-        
-        Map<String, List<List<Object>>> result = new HashMap<>();
-        result.put("training", trainingData);
-        result.put("testing", testingData);
-
-        return result;
+        SplittedData ret = xysplit(trainingData, testingData, y_col);
+        return ret; 
     }
 
     public static void main(String[] args) {
         // Example usage
+        PreProcessor obj = new PreProcessor();
         List<List<Object>> data = new ArrayList<>();
 
         // Populating the data with sample values
@@ -135,24 +174,37 @@ public class PreProcessor {
 
         int columnIndexToProcess = 0;
 
-        replaceNullWithMean(data, columnIndexToProcess);
-        normalizeColumn(data, columnIndexToProcess);
-        labelEncodeColumn(data,1);
+        obj.replaceNullWithMean(data, columnIndexToProcess);
+        obj.normalizeColumn(data, columnIndexToProcess);
+        obj.labelEncodeColumn(data,1);
+        obj.labelEncodeColumn(data, 0);
 
         System.out.println("\nProcessed Data:");
         printData(data);
 
         double splitRatio = 0.8; // 80% for training, 20% for testing
-        Map<String, List<List<Object>>> splitResult = splitData(data, splitRatio);
+        SplittedData splitResult = obj.splitData(data, splitRatio, 1);
 
-        List<List<Object>> trainingData = splitResult.get("training");
-        List<List<Object>> testingData = splitResult.get("testing");
+        List<List<Integer>> x_train = splitResult.get_x_train();
+        List<List<Integer>> x_test = splitResult.get_x_test();
+        List<Integer> y_test = splitResult.get_y_test();
+        List<Integer> y_train = splitResult.get_y_train();
 
-        System.out.println("\nTraining Data:");
-        printData(trainingData);
+        System.out.println("\nTraining Data x:");
+        for (List<Integer> row: x_train)
+            System.out.println(row);
+        
+        System.out.println("\nTraining Data y:");
+        for (Integer val: y_train)
+            System.out.println(val);
 
-        System.out.println("\nTesting Data:");
-        printData(testingData);
+        System.out.println("\nTesting Data x:");
+        for (List<Integer> row: x_test)
+            System.out.println(row);
+        
+        System.out.println("\nTesting Data y:");
+        for (Integer val: y_test)
+            System.out.println(val);
     }
 
     private static void printData(List<List<Object>> data) {
