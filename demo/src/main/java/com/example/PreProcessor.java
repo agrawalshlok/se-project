@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class PreProcessor {
-
-    // Function to replace null values with the mean for a specific column
     public void replaceNullWithMean(List<List<Object>> data, int columnIndex) {
         // Calculate the mean for the specified column
         double sum = 0;
@@ -37,19 +35,19 @@ public class PreProcessor {
     // Function to normalize a specific column
     public void normalizeColumn(List<List<Object>> data, int columnIndex) {
         // Find the min and max values for the specified column
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
+        Double min = Double.MAX_VALUE;
+        Double max = Double.MIN_VALUE;
 
         for (List<Object> row : data) {
-            double value = Double.parseDouble(row.get(columnIndex).toString());
+            Double value = Double.parseDouble(row.get(columnIndex).toString());
             min = Math.min(min, value);
             max = Math.max(max, value);
         }
 
         // Normalize the values in the specified column
         for (List<Object> row : data) {
-            double value = Double.parseDouble(row.get(columnIndex).toString());
-            double normalizedValue = (value - min) / (max - min);
+            Double value = Double.parseDouble(row.get(columnIndex).toString());
+            Double normalizedValue = (value - min) / (max - min);
             row.set(columnIndex, normalizedValue);
         }
     }
@@ -57,8 +55,8 @@ public class PreProcessor {
     // Function to label encode a specific column
     public void labelEncodeColumn(List<List<Object>> data, int columnIndex) {
         // Create a mapping of unique values to their corresponding labels
-        Map<Object, Integer> valueToLabel = new HashMap<>();
-        int labelCounter = 0;
+        Map<Object, Double> valueToLabel = new HashMap<>();
+        double labelCounter = 0;
 
         for (List<Object> row : data) {
             Object value = row.get(columnIndex);
@@ -71,26 +69,25 @@ public class PreProcessor {
         // Label encode the values in the specified column
         for (List<Object> row : data) {
             Object value = row.get(columnIndex);
-            int label = valueToLabel.get(value);
+            double label = valueToLabel.get(value);
             row.set(columnIndex, label);
         }
     }
 
     private SplittedData xysplit (List<List<Object>> trainingData, List<List<Object>> testingData, int y_col) {
-        int i = 0;
-        List<List<Integer>> x_train = new ArrayList<>();
-        List<List<Integer>> x_test = new ArrayList<>();
-        List<Integer> y_train = new ArrayList<>();
-        List<Integer> y_test = new ArrayList<>();
+        List<List<Double>> x_train = new ArrayList<>();
+        List<List<Double>> x_test = new ArrayList<>();
+        List<Double> y_train = new ArrayList<>();
+        List<Double> y_test = new ArrayList<>();
 
         for (List<Object> row: trainingData) {
-            List<Integer> temp = new ArrayList<>();
-            for (i = 0; i < row.size(); i++) {
+            List<Double> temp = new ArrayList<>();
+            for (int i = 0; i < row.size(); i++) {
                 if (i != y_col) {
-                    int value = Integer.parseInt(row.get(i).toString());
+                    double value = Double.parseDouble(row.get(i).toString());
                     temp.add(value);
                 } else {
-                    int value = Integer.parseInt(row.get(i).toString());
+                    double value = Double.parseDouble(row.get(i).toString());
                     y_train.add(value);
                 }
             }
@@ -99,13 +96,13 @@ public class PreProcessor {
         }
 
         for (List<Object> row: testingData) {
-            List<Integer> temp = new ArrayList<>();
-            for (i = 0; i < row.size(); i++) {
+            List<Double> temp = new ArrayList<>();
+            for (int i = 0; i < row.size(); i++) {
                 if (i != y_col) {
-                    int value = Integer.parseInt(row.get(i).toString());
+                    double value = Double.parseDouble(row.get(i).toString());
                     temp.add(value);
                 } else {
-                    int value = Integer.parseInt(row.get(i).toString());
+                    double value = Double.parseDouble(row.get(i).toString());
                     y_test.add(value);
                 }
             }
@@ -127,24 +124,24 @@ public class PreProcessor {
 
         Random random = new Random();
         int cnt = (int)(splitRatio * ((double)(data.size())));
-        ArrayList<Integer> used = new ArrayList<Integer>();
+        ArrayList<Double> used = new ArrayList<Double>();
         for (int i = 0; i < data.size(); i++)
-            used.add(0);
+            used.add(0.0);
 
         int curr = 0;
         while (curr < cnt) {
             int randomValue = random.nextInt(data.size());
-            if (used.get(randomValue) == 1)
+            if (used.get(randomValue) == 1.0)
                 continue;
             
-            used.set(randomValue, 1);
+            used.set(randomValue, 1.0);
             curr++;
         }
 
 
         int i = 0;
         for (List<Object> row : data) {
-            if (used.get(i) == 1) {
+            if (used.get(i) == 1.0) {
                 trainingData.add(row);
             } else {
                 testingData.add(row);
@@ -164,10 +161,10 @@ public class PreProcessor {
 
         // Populating the data with sample values
         data.add(Arrays.asList(1.0, "A", 10));
-        data.add(Arrays.asList(2.0, "B", 20));
+        data.add(Arrays.asList(2.3, "B", 20));
         data.add(Arrays.asList(null, "A", 30));
-        data.add(Arrays.asList(4.0, "C", 40));
-        data.add(Arrays.asList(5.0, "B", 50));
+        data.add(Arrays.asList(4.4, "C", 40));
+        data.add(Arrays.asList(5.6, "B", 50));
 
         System.out.println("Original Data:");
         printData(data);
@@ -177,7 +174,6 @@ public class PreProcessor {
         obj.replaceNullWithMean(data, columnIndexToProcess);
         obj.normalizeColumn(data, columnIndexToProcess);
         obj.labelEncodeColumn(data,1);
-        obj.labelEncodeColumn(data, 0);
 
         System.out.println("\nProcessed Data:");
         printData(data);
@@ -185,25 +181,25 @@ public class PreProcessor {
         double splitRatio = 0.8; // 80% for training, 20% for testing
         SplittedData splitResult = obj.splitData(data, splitRatio, 1);
 
-        List<List<Integer>> x_train = splitResult.get_x_train();
-        List<List<Integer>> x_test = splitResult.get_x_test();
-        List<Integer> y_test = splitResult.get_y_test();
-        List<Integer> y_train = splitResult.get_y_train();
+        List<List<Double>> x_train = splitResult.get_x_train();
+        List<List<Double>> x_test = splitResult.get_x_test();
+        List<Double> y_test = splitResult.get_y_test();
+        List<Double> y_train = splitResult.get_y_train();
 
         System.out.println("\nTraining Data x:");
-        for (List<Integer> row: x_train)
+        for (List<Double> row: x_train)
             System.out.println(row);
         
         System.out.println("\nTraining Data y:");
-        for (Integer val: y_train)
+        for (Double val: y_train)
             System.out.println(val);
 
         System.out.println("\nTesting Data x:");
-        for (List<Integer> row: x_test)
+        for (List<Double> row: x_test)
             System.out.println(row);
         
         System.out.println("\nTesting Data y:");
-        for (Integer val: y_test)
+        for (Double val: y_test)
             System.out.println(val);
     }
 
