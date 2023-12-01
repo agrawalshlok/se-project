@@ -130,6 +130,30 @@ public class PreProcessor {
         return ret;
     }
 
+    public List<Object> getColumn(List<List<Object>> dataset, int index){
+        List<Object> column = new ArrayList<>();
+        if(!dataset.isEmpty() && index< dataset.get(0).size()){
+            for(List<Object> row: dataset){
+                column.add(row.get(index));
+            }
+        }
+        return column;
+    }
+
+    public <T> List<List<T>> get2DListWithoutColumn(List<List<T>> dataset, int index){
+        List<List<T>> withoutColumn = new ArrayList<>();
+        if(!dataset.isEmpty() && index < dataset.get(0).size()){
+            for (List<T> row : dataset) {
+                List<T> updatedRow = new ArrayList<>(row.subList(0,index));
+                updatedRow.addAll(row.subList(index+1,row.size()));
+                withoutColumn.add(new ArrayList<>(updatedRow));
+            }
+
+            return withoutColumn;
+        }
+        return dataset;
+    }
+
     public SplittedData splitData(List<List<Object>> data, double splitRatio, int y_col) {
         if (splitRatio < 0 || splitRatio > 1) {
             throw new IllegalArgumentException("Invalid split ratio. It must be between 0 and 1.");

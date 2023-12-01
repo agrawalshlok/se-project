@@ -1,69 +1,68 @@
 package com.example;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class NaiveBayesClassifier{
+public class NaiveBayesClassifier implements MlModel{
 
-    private Map<Integer, Double> classProbs;//class probabilities
-    private Map<Integer, Map<Integer, Map<Integer,Double>> > featureProbs;
-    private List<Integer> classes;//list of classes(number of unique y values)
-    private List<List<Integer>> features;//maintains unique value of features.
+    private Map<Double, Double> classProbs;//class probabilities
+    private Map<Double, Map<Integer, Map<Double,Double>> > featureProbs;
+    private List<Double> classes;//list of classes(number of unique y values)
+    private List<List<Double>> features;//maintains unique value of features.
 
     public NaiveBayesClassifier() {
         this.classProbs = new HashMap<>();
         this.featureProbs = new HashMap<>();
     }
 
-    public void fit(List<List<Integer>> X, List<Integer> y) {
+    public void fit(List<List<Double>> X, List<Double> y) {
         // Get unique classes and features
         this.classes = getUniqueValues(y);
         this.features = getUnique2DValues(X);
 
         // Calculate class probabilities
-        for (Integer c : this.classes) {
+        for (Double c : this.classes) {
 
             double classProb = calculateClassProbability(c, y);
+//            System.out.println(c+": "+classProb);
             classProbs.put(c, classProb);
 
             // Calculate feature probabilities for each class
-            Map<Integer, Map<Integer,Double>> featureProbMap = new HashMap<>();
+            Map<Integer, Map<Double,Double>> featureProbMap = new HashMap<>();
 
             for (int i=0;i<features.size();i++) {
 
-                Map<Integer,Double> featureval=new HashMap<>();
+                Map<Double,Double> featureVal=new HashMap<>();
 
                 for(int j=0;j<features.get(i).size();j++){
 
-                    Integer val=features.get(i).get(j);
+                    double val=features.get(i).get(j);
                     double featureProb = calculateFeatureProbability(i, val, c, X, y);
-                    featureval.put(val,featureProb);
+                    featureVal.put(val,featureProb);
 
                 }
 
-                featureProbMap.put(i, featureval);
+                featureProbMap.put(i, featureVal);
+//                System.out.println(i+": "+featureProbMap);
             }
 
             featureProbs.put(c, featureProbMap);
         }
     }
 
-    public List<Integer> predict(List<List<Integer>> X) {
-        List<Integer> yPred = new ArrayList<>();
-        for (List<Integer> sample : X) {
+    public List<Double> predict(List<List<Double>> X) {
+        List<Double> yPred = new ArrayList<>();
+        for (List<Double> sample : X) {
             // Calculate the posterior probability for each class
             //Here we take posterior is proportional to sum of log likelihoods and log of class probability.
-            Map<Integer,Double> classProbabilites=new HashMap<>();
+            Map<Double,Double> classProbabilites=new HashMap<>();
 
-            for (Integer c : this.classes) {
+            for (Double c : this.classes) {
 
                 double classProb = Math.log(classProbs.get(c));
                 double featureProbSum = 0.0;
 
                 for (int i = 0; i < sample.size(); i++) {
-                    int feature = sample.get(i);
+                    double feature = sample.get(i);
                     double featureProb = Math.log(featureProbs.get(c).get(i).getOrDefault(feature, 1e-10));
                     featureProbSum += featureProb;
                 }
@@ -73,7 +72,7 @@ public class NaiveBayesClassifier{
                 classProbabilites.put(c, posteriorProb);
             }
             // Choose the class with the highest posterior probability
-            int predClass = classProbabilites.entrySet().stream()
+            double predClass = classProbabilites.entrySet().stream()
                     .max(Map.Entry.comparingByValue())
                     .orElseThrow(null)
                     .getKey();
@@ -84,42 +83,46 @@ public class NaiveBayesClassifier{
         return yPred;
     }
 
-    public double calculateAccuracy(List<Integer> yTrue, List<Integer> yPred) { //calculation done based on number of correctly classification.
+    public double calculateAccuracy(List<Double> yTrue, List<Double> yPred) { //calculation done based on number of correctly classification.
         int correct = 0;
         for (int i = 0; i < yTrue.size(); i++) {
-            if (yTrue.get(i).equals(yPred.get(i))) {
+            if (areDoublesEqual(yTrue.get(i), yPred.get(i), 0.0001)) {
                 correct++;
             }
         }
         return (double) correct / yTrue.size();
     }
 
-    private double calculateClassProbability(Integer targetClass, List<Integer> y) { //to calculate probability of a class
+    private static boolean areDoublesEqual(double value1, double value2, double delta ) {
+        return Math.abs(value1 - value2) < delta;
+    }
+
+    private double calculateClassProbability(Double targetClass, List<Double> y) { //to calculate probability of a class
         int count = 0;
-        for (Integer c : y) {
-            if (c.equals(targetClass)) {
+        for (Double c : y) {
+            if (areDoublesEqual(c,targetClass,0.0001)) {
                 count++;
             }
         }
         return (double) count / y.size();
     }
 
-    private double calculateFeatureProbability(Integer column,Integer featureval, Integer targetClass, List<List<Integer>> X, List<Integer> y) { //finding P(w/y) with laplace smoothing
+    private double calculateFeatureProbability(Integer column,Double featureval, Double targetClass, List<List<Double>> X, List<Double> y) { //finding P(w/y) with laplace smoothing
 
         //Formula for laplace smoothing : P(w/y)=(number of points with w and y + 1)/(number of points with y + number of features)
 
         int count = 1; //default value
-        int total = 1; 
+        int total = 1;
 
         for (int i = 0; i < X.size(); i++) {
-            if (y.get(i).equals(targetClass)) {
+            if (areDoublesEqual(y.get(i),targetClass,0.0001)) {
                 total+=1;
-                if(featureval.equals(X.get(i).get(column))) count++;
+                if(areDoublesEqual(featureval,X.get(i).get(column),0.0001)) count++;
             }
         }
 
-        for (Integer c : this.classes) {
-            if (c.equals(targetClass)) {
+        for (Double c : this.classes) {
+            if (areDoublesEqual(c,targetClass,0.0001)) {
                 total += X.get(0).size(); // To get number of features.
                 break;
             }
@@ -128,20 +131,20 @@ public class NaiveBayesClassifier{
         return (double) count / total;
     }
 
-    private List<Integer> getUniqueValues(List<Integer> list) {
+    private List<Double> getUniqueValues(List<Double> list) {
         return list.stream()
                 .distinct()
                 .collect(Collectors.toList());
     }
 
-    private List<List<Integer>> getUnique2DValues(List<List<Integer>> list) {
-        List<List<Integer>> unique=new ArrayList<>();
+    private List<List<Double>> getUnique2DValues(List<List<Double>> list) {
+        List<List<Double>> unique=new ArrayList<>();
 
         int x=list.size();
         int y=list.get(0).size();
 
         for(int j=0;j<y;j++){
-            List<Integer> column=new ArrayList<>();
+            List<Double> column=new ArrayList<>();
             for(int i=0;i<x;i++){
                 column.add(list.get(i).get(j));
             }
@@ -153,38 +156,32 @@ public class NaiveBayesClassifier{
 
     public static void main(String[] args) {
         // Example usage with a larger dataset
-        List<List<Integer>> X_train = new ArrayList<>();
-        List<Integer> y_train = new ArrayList<>();
+        List<List<Double>> X_train = new ArrayList<>();
+        List<Double> y_train = new ArrayList<>();
 
-        // Generating a synthetic dataset
-        for (int i = 0; i < 100; i++) {
-            List<Integer> features = new ArrayList<>();
-            for (int j = 0; j < 5; j++) {
-                features.add((int) (Math.random() * 5));  // Random integer between 0 and 4
-            }
-            X_train.add(features);
+        X_train.add(Arrays.asList(1.2, 3.4, 2.1, 4.5, 0.8));
+        X_train.add(Arrays.asList(0.5, 2.8, 3.2, 1.7, 4.3));
+        X_train.add(Arrays.asList(2.0, 1.0, 4.5, 3.1, 2.2));
+        X_train.add(Arrays.asList(3.0, 1.2, 2.4, 3.2, 4.2));
+        X_train.add(Arrays.asList(4.3, 3.0, 1.2, 0.9, 2.5));
 
-            // Assigning a class label (0 to 3) based on some condition (for example, sum of features)
-            int label = (features.stream().mapToInt(Integer::intValue).sum() > 7) ? 1 : 0;
-            y_train.add(label);
-        }
-
+        y_train.add(0.0);
+        y_train.add(1.0);
+        y_train.add(0.0);
+        y_train.add(1.0);
+        y_train.add(1.0);
         // Create and fit the Naive Bayes classifier
         NaiveBayesClassifier nbClassifier = new NaiveBayesClassifier();
         nbClassifier.fit(X_train, y_train);
 
         // Testing data
-        List<List<Integer>> X_test = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            List<Integer> testFeatures = new ArrayList<>();
-            for (int j = 0; j < 5; j++) {
-                testFeatures.add((int) (Math.random() * 5));  // Random integer between 0 and 4
-            }
-            X_test.add(testFeatures);
-        }
+        List<List<Double>> X_test = new ArrayList<>();
+        X_test.add(Arrays.asList(1.2, 1.0, 2.1, 4.5, 0.8));
+        X_test.add(Arrays.asList(3.0, 1.2, 4.5, 1.7, 4.2));
+        X_test.add(Arrays.asList(4.3, 3.0, 1.2, 3.2, 0.8));
 
         // Predict the labels for the test data
-        List<Integer> y_pred = nbClassifier.predict(X_test);
+        List<Double> y_pred = nbClassifier.predict(X_test);
 
         // Print the predicted labels
         System.out.println("Predicted Labels: " + y_pred);

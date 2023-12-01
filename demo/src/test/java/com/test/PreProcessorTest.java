@@ -2,6 +2,7 @@ package com.test;
 
 import com.example.CSVtoArrayList;
 import com.example.PreProcessor;
+import com.example.SplittedData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,17 +37,62 @@ class PreProcessorTest {
     }
 
     @Test
+    @DisplayName("Encoding Column")
     void labelEncodeColumn() {
         List<List<Object>> data = createTestData();
         preProcessor.labelEncodeColumn(data,0);
         assertEquals(1.0, (Double) data.get(1).get(0), DELTA);
         assertEquals(2.0, (Double) data.get(2).get(0), DELTA);
-
     }
 
     @Test
+    @DisplayName("Getting Column from 2D List")
+    void getColumn(){
+        List<List<Object>> data = createTestData();
+        List<Object> Ycolumn=preProcessor.getColumn(data,data.get(0).size()-1);
+        assertEquals(5,Ycolumn.size());
+        assertEquals("Partly Cloudy",Ycolumn.get(1));
+    }
+
+    @Test
+    @DisplayName("Getting 2D List without a column")
+    void get2DList(){
+        List<List<Object>> data = createTestData();
+        List<List<Object>> newList= preProcessor.get2DListWithoutColumn(data,1);
+        assertEquals(5,newList.size());
+        assertEquals(4,newList.get(0).size());
+        assertEquals(67,newList.get(0).get(1));
+
+        List<List<Object>> newdata = createTestData();
+        List<List<Object>> secondList= preProcessor.get2DListWithoutColumn(newdata,4);
+
+        assertEquals(4,secondList.get(0).size());
+        assertEquals(15.0,secondList.get(0).get(1));
+
+    }
+
+
+    @Test
+    @DisplayName("Getting Train-Test Split")
     void splitData() {
         List<List<Object>> data = createTestData();
+        preProcessor.labelEncodeColumn(data,0);
+        preProcessor.labelEncodeColumn(data,4);
+        preProcessor.replaceNullWithMode(data,1);
+
+        //dataset shouldn't have null values at this point and everything should be label encoded.
+        SplittedData newData=preProcessor.splitData(data,0.8,4);
+
+        //testing number of rows in train and test
+        assertEquals(4,newData.get_x_train().size());
+        assertEquals(4,newData.get_y_train().size());
+
+        assertEquals(1,newData.get_x_test().size());
+        assertEquals(1,newData.get_y_test().size());
+
+        //testing number of columns
+        assertEquals(data.get(0).size()-1,newData.get_x_train().get(0).size());
+        assertEquals(data.get(0).size()-1,newData.get_x_test().get(0).size());
 
     }
 
