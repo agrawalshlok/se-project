@@ -3,13 +3,13 @@ Monday,15,65,10,Clear
 Tuesday,18,70,15,Partly Cloudy
 Wednesday,12,60,12,Rainy
 Thursday,20,75,18,Clear
-Friday,22,68,14,Partly Cloudy
+Friday,,68,14,Partly Cloudy
 Saturday,14,55,8,Rainy
 Sunday,16,72,11,Clear
-Monday,25,80,20,Partly Cloudy
+Monday,25,,20,Partly Cloudy
 Tuesday,19,63,13,Rainy
 Wednesday,17,58,9,Clear
-Thursday,21,75,16,Partly Cloudy
+Thursday,21,,16,Partly Cloudy
 Friday,23,70,14,Rainy
 Saturday,13,50,7,Clear
 Sunday,26,78,22,Partly Cloudy
@@ -29,3 +29,54 @@ Saturday,23,75,20,Rainy
 Sunday,17,62,14,Clear
 Monday,20,68,15,Partly Cloudy
 Tuesday,14,55,8,Rainy
+Friday,23,70,14,Rainy
+Saturday,13,50,7,Clear
+Sunday,26,78,22,Partly Cloudy
+Monday,20,68,17,Rainy
+Tuesday,18,62,11,Clear
+Wednesday,14,55,8,Partly Cloudy
+Thursday,22,77,19,Rainy
+Friday,16,60,13,Clear
+Saturday,19,72,15,Partly Cloudy
+Sunday,24,80,18,Rainy
+Monday,13,58,9,Clear
+Tuesday,27,85,25,Partly Cloudy
+Wednesday,18,65,12,Rainy
+Thursday,15,50,10,Clear
+Friday,21,70,16,Partly Cloudy
+Saturday,23,75,20,Rainy
+Sunday,17,62,14,Clear
+Monday,20,68,15,Partly Cloudy
+Tuesday,14,55,8,Rainy
+Wednesday,19,72,16,Clear
+Thursday,25,80,21,Partly Cloudy
+Friday,17,62,13,Rainy
+Saturday,22,75,18,Clear
+Sunday,15,58,11,Partly Cloudy
+Monday,21,70,17,Rainy
+Tuesday,14,52,9,Clear
+Wednesday,24,78,20,Partly Cloudy
+Thursday,18,62,14,Rainy
+Friday,13,50,7,Clear
+Saturday,27,85,25,Partly Cloudy
+Sunday,19,68,16,Rainy
+Monday,23,75,19,Clear
+Tuesday,16,60,12,Partly Cloudy
+Wednesday,20,70,18,Rainy
+Thursday,14,55,8,Clear
+Friday,22,77,21,Partly Cloudy
+Saturday,18,65,15,Rainy
+Sunday,13,58,10,Clear
+Monday,26,80,24,Partly Cloudy
+Tuesday,17,62,13,Rainy
+Wednesday,21,72,19,Clear
+Thursday,15,50,9,Partly Cloudy
+Friday,19,68,16,Rainy
+Saturday,24,78,22,Clear
+Sunday,14,55,11,Partly Cloudy
+Monday,18,62,14,Rainy
+Tuesday,23,75,20,Clear
+Wednesday,16,60,12,Partly Cloudy
+Thursday,20,70,18,Rainy
+Friday,13,52,9,Clear
+Saturday,25,80,23,Partly Cloudy

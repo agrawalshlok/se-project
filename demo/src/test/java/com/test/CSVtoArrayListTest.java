@@ -13,7 +13,7 @@ class CSVtoArrayListTest {
 
         String filePath = System.getProperty("user.dir")+"/src/main/java/com/example/dataset.csv";
         List<List<Object>> records=CSVtoArrayList.readCSV(filePath);
-        assertEquals(31, records.size()); // Assuming 30 rows in the test CSV
+        assertEquals(82, records.size()); // Assuming 30 rows in the test CSV
 
         // Check values for a specific row (e.g., the first row)
         List<Object> firstRow = records.get(1);
