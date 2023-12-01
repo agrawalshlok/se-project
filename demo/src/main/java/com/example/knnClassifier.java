@@ -1,4 +1,5 @@
 package com.example;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,7 +8,7 @@ import java.util.Map;
 
 import java.util.HashMap;
 
-public class knnClassifier implements MlModel{
+public class knnClassifier implements MlModel {
 
     private List<List<Double>> trainingData; // Change the type of trainingData to List<List<Double>>
     private List<Double> labels;
@@ -22,6 +23,14 @@ public class knnClassifier implements MlModel{
     public void fit(List<List<Double>> X_train, List<Double> y_train) {
         this.trainingData = X_train;
         this.labels = y_train;
+    }
+
+    public List<List<Double>> getTrainingData() {
+        return trainingData;
+    }
+
+    public List<Double> getLabels() {
+        return labels;
     }
 
     private Double _predict(List<Double> instance) {
@@ -106,22 +115,45 @@ public class knnClassifier implements MlModel{
         trainingData.add(List.of(1.0, 2.0));
         trainingData.add(List.of(2.0, 3.0));
         trainingData.add(List.of(3.0, 4.0));
+        trainingData.add(List.of(5.0, 5.0));
+        trainingData.add(List.of(1.5, 2.5));
+        trainingData.add(List.of(4.0, 3.0));
 
-        // Corresponding labels
+        // Corresponding labels for training data
         List<Double> labels = new ArrayList<>();
+        labels.add(0.0);
         labels.add(1.0);
-        labels.add(2.0);
+        labels.add(0.0);
+        labels.add(1.0);
+        labels.add(0.0);
         labels.add(1.0);
 
         // Train the model
         knn.fit(trainingData, labels);
 
-        // Make predictions
-        List<Double> testInstance = List.of(2.0, 3.0);
-        List<List<Double>> y_test = new ArrayList<>();
-        y_test.add(testInstance);
-        List<Double> y_pred = knn.predict(y_test);
+        // Test data
+        List<List<Double>> testData = new ArrayList<>();
+        testData.add(List.of(2.5, 3.5));
+        testData.add(List.of(4.5, 4.5));
+        testData.add(List.of(1.0, 2.0));
 
-        System.out.println("Predicted label: " + y_pred.get(0));
+        // Corresponding labels for test data (ground truth)
+        List<Double> testLabels = List.of(1.0, 1.0, 0.0);
+
+        // Make predictions
+        List<Double> predictions = knn.predict(testData);
+
+        // Calculate accuracy
+        double accuracy = knn.calculateAccuracy(testLabels, predictions);
+
+        // Print results
+        for (int i = 0; i < testData.size(); i++) {
+            System.out.println("Test instance: " + testData.get(i) +
+                    " | Predicted label: " + predictions.get(i) +
+                    " | True label: " + testLabels.get(i));
+        }
+
+        System.out.println("Accuracy: " + accuracy);
+
     }
 }
