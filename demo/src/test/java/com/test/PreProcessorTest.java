@@ -29,8 +29,8 @@ class PreProcessorTest {
         List<List<Object>> data = createTestData();
 //        data=data.subList(1,data.size());
         preProcessor.normalizeColumn(data,2);
-
-        assertEquals(0.66, (Double) data.get(1).get(2), DELTA);
+        System.out.println(data);
+        assertEquals(0.789, (Double) data.get(1).get(2), DELTA);
         assertEquals(0.0, (Double) data.get(2).get(2), DELTA);
 
     }
@@ -53,11 +53,11 @@ class PreProcessorTest {
     private List<List<Object>> createTestData() {
         List<List<Object>> testData = new ArrayList<>();
         // Add two rows of mock data
-        testData.add(Arrays.asList("Monday", 15.0, 65, 10, "Clear"));
-        testData.add(Arrays.asList("Tuesday",null, 70, 15, "Partly Cloudy"));
+        testData.add(Arrays.asList("Monday", 15.0, 67, 10, "Clear"));
+        testData.add(Arrays.asList("Tuesday",null, 75, 15, "Partly Cloudy"));
         testData.add(Arrays.asList("Wednesday", 12.0, 60, 12, "Rainy"));
-        testData.add(Arrays.asList("Thursday", 12.0, 75, 18, "Clear"));
-        testData.add(Arrays.asList("Wednesday", 14.0, 60, 12, "Rainy"));
+        testData.add(Arrays.asList("Thursday", 12.0, 79, 18, "Clear"));
+        testData.add(Arrays.asList("Wednesday", 14.0, 67, 12, "Rainy"));
 
 //        testData.add(Arrays.asList("Friday", 15.0, 75, 18, "Clear"));
 
