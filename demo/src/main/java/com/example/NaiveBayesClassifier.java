@@ -97,7 +97,7 @@ public class NaiveBayesClassifier implements MlModel{
         return Math.abs(value1 - value2) < delta;
     }
 
-    private double calculateClassProbability(Double targetClass, List<Double> y) { //to calculate probability of a class
+    public double calculateClassProbability(Double targetClass, List<Double> y) { //to calculate probability of a class
         int count = 0;
         for (Double c : y) {
             if (areDoublesEqual(c,targetClass,0.0001)) {
@@ -107,7 +107,7 @@ public class NaiveBayesClassifier implements MlModel{
         return (double) count / y.size();
     }
 
-    private double calculateFeatureProbability(Integer column,Double featureval, Double targetClass, List<List<Double>> X, List<Double> y) { //finding P(w/y) with laplace smoothing
+    public double calculateFeatureProbability(Integer column,Double featureval, Double targetClass, List<List<Double>> X, List<Double> y) { //finding P(w/y) with laplace smoothing
 
         //Formula for laplace smoothing : P(w/y)=(number of points with w and y + 1)/(number of points with y + number of features)
 
@@ -131,13 +131,13 @@ public class NaiveBayesClassifier implements MlModel{
         return (double) count / total;
     }
 
-    private List<Double> getUniqueValues(List<Double> list) {
+    public List<Double> getUniqueValues(List<Double> list) {
         return list.stream()
                 .distinct()
                 .collect(Collectors.toList());
     }
 
-    private List<List<Double>> getUnique2DValues(List<List<Double>> list) {
+    public List<List<Double>> getUnique2DValues(List<List<Double>> list) {
         List<List<Double>> unique=new ArrayList<>();
 
         int x=list.size();

@@ -106,8 +106,6 @@ class PreProcessorTest {
         testData.add(Arrays.asList("Wednesday", 14.0, 67, 12, "Rainy"));
 
 //        testData.add(Arrays.asList("Friday", 15.0, 75, 18, "Clear"));
-
-
         return testData;
     }
 }
